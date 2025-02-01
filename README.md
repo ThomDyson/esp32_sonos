@@ -1,7 +1,7 @@
 # Rotary Dial for Sonos
 A long time ago, Sonos made  stand alone remote to control their speakers. Since everyone has a smartphone, they have long since discontinued the remote. This project uses a Ma Touch 2.1" rotary display as a basic control for Sonos players.  At this time, it only controls volume and mute, advances to prev/next song, and starts and stops playback. If there is nothing in the sonos queue, it will not add anything to the queue. I use Alexa for that.
 
-![Animation](./assets/CYDFlipClock1.gif)
+<img src="./assets/matouch_21_display.jpg" alt="Alt Text" width="300" height="400">
 
 ## Requirements
 
