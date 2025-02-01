@@ -14,16 +14,16 @@ This project uses the following libraries.
 **[Arduino GFX](https://github.com/moononournation/Arduino_GFX)**
 The controller sfotware has been tested with version 1.5.x of this graphics driver library. This library requires version 3.1.x of esp32 by Espressif Systems. This is under Board Manager in the Arduino IDE. Platfomio doesn't support current versions of the esp32 library by default. 
 
-**[LVGL](https://github.com/lvgl)**
-I use LVGL 9 for the display widgets. Using LVGL with Arduino requires some extra steps, be sure to read the docs [here](https://docs.lvgl.io/master/get-started/platforms/arduino.html). This project doesn't need any special configuration; just use a standard ESP32, Arduino file.
+**[LVGL](https://github.com/lvgl/lvgl)**
+I use LVGL 9 for the display widgets. Using LVGL with Arduino requires some extra steps, be sure to read the docs [here](https://docs.lvgl.io/master/details/integration/framework/arduino.html). This project doesn't need any special configuration; just use a standard ESP32, Arduino file. **Note**:This project does not use the TFT_eSPI library mentiuoned in the LVGL documents. This ues Arduino GFX instead. 
 
-**[MicroXPath]**
+**MicroXPath**
 This is a hard fork of the XML procesor found [here](https://github.com/tmittet/microxpath). 
 
-**[SonosUPnP]**
+**SonosUPnP**
 This is a hard fork of the Sonos processing library found [here](https://github.com/javos65/Sonos-ESP32). This is an amazing library. I've nly scratched the surface of the functions, but at same time it is showing its age. For example, there is no support for straming services like Spotify. 
 
-**[touch]**
+**touch**
 A simple library to interact with the touch sensor.
 
 ## Instructions
