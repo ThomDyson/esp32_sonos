@@ -363,6 +363,8 @@ struct FullTrackInfo // JV new, pass text-info as char string
   char *creator;
   char *title;
   char *album;
+  uint16_t positionSeconds;
+  uint16_t durationSeconds; 
   
   };
 
@@ -461,6 +463,7 @@ class SonosUPnP
     int8_t getBass(IPAddress speakerIP);
     int8_t getTreble(IPAddress speakerIP);
     bool getLoudness(IPAddress speakerIP);
+    bool isValidTimeFormat(const char *str);
  
 
     #endif

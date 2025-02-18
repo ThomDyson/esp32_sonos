@@ -28,7 +28,7 @@
 #include "SonosUPnP.h"
 
 #define DEBUG_XPATH 0 // serial print Data read and write to xPath
-// #define DEBUG_XGEN 1       // serial print generic debug info
+//#define DEBUG_XGEN 1       // serial print generic debug info
 
 const char p_HttpVersion[] PROGMEM         = HTTP_VERSION;
 const char p_HeaderHost[] PROGMEM          = HEADER_HOST;
@@ -552,6 +552,7 @@ TrackInfo SonosUPnP::getTrackInfo( IPAddress speakerIP, char *uriBuffer, size_t 
     // Track duration
     PGM_P dpath[] = { p_SoapEnvelope, p_SoapBody, p_GetPositionInfoR, p_TrackDuration };
     ethClient_xPath( dpath, 4, infoBuffer, sizeof( infoBuffer ) );
+
     trackInfo.duration = getTimeInSeconds( infoBuffer );
     // Track URI
     PGM_P upath[] = { p_SoapEnvelope, p_SoapBody, p_GetPositionInfoR, p_TrackURI };
@@ -569,10 +570,11 @@ TrackInfo SonosUPnP::getTrackInfo( IPAddress speakerIP, char *uriBuffer, size_t 
 // JV
 // New function to pass full track info including Artist, Album and Songname. Uses modified Xpath parsing
 // PArsed from SERVICE : AVTRAnsport -> GetPositionInfo -> XLM response incl TrackMetaData
-//commented out parts not needed for rotary display
+// this takes two calls because of the way the xml processors works
+
 FullTrackInfo SonosUPnP::getFullTrackInfo( IPAddress speakerIP ) {
   FullTrackInfo trackInfo;
-  /*
+  
   if ( upnpPost( speakerIP, UPNP_AV_TRANSPORT, p_GetPositionInfoA, "", "", "", 0, 0, "" ) ) {
     xPath.reset();
     // char infoBuffer[20] = "";
@@ -582,16 +584,33 @@ FullTrackInfo SonosUPnP::getFullTrackInfo( IPAddress speakerIP ) {
     ethClient_xPath( npath, 4, infoBuffer, sizeof( infoBuffer ) );
     trackInfo.number = atoi( infoBuffer );
     // Track duration
+
     trackInfo.duration = DURATION_BUFFER;
+
     PGM_P dpath[]      = { p_SoapEnvelope, p_SoapBody, p_GetPositionInfoR, p_TrackDuration };
     ethClient_xPath( dpath, 4, DURATION_BUFFER, sizeof( DURATION_BUFFER ) );
+    if (!isValidTimeFormat(DURATION_BUFFER)){  //added check on format to handle non player devices.
+      strncpy(DURATION_BUFFER,"  ",sizeof(DURATION_BUFFER));
+      trackInfo.durationSeconds = 1;
+    } else {
+      trackInfo.durationSeconds = getTimeInSeconds(DURATION_BUFFER);
+    }
+
     // Track position
     trackInfo.position = POSITION_BUFFER;
     PGM_P ppath[]      = { p_SoapEnvelope, p_SoapBody, p_GetPositionInfoR, p_RelTime };
     ethClient_xPath( ppath, 4, POSITION_BUFFER, sizeof( POSITION_BUFFER ) );
+    if (!isValidTimeFormat(POSITION_BUFFER)){  //added check on format to handle non player devices.
+      strncpy(POSITION_BUFFER,"  ",sizeof(POSITION_BUFFER));
+      trackInfo.positionSeconds = 0;
+    } else {
+      trackInfo.positionSeconds = getTimeInSeconds(POSITION_BUFFER);
+    }
+
+  
   }
   ethClient_stop();
-  */
+  
   if ( upnpPost( speakerIP, UPNP_AV_TRANSPORT, p_GetPositionInfoA, "", "", "", 0, 0, "" ) ) {
     xPath.reset();
     // char infoBuffer[20] = "";
@@ -1015,7 +1034,7 @@ void SonosUPnP::ethClient_stop() {
      char c;
     while ( ethClient.available() )
         c = ethClient.read(); // Read each byte
-        Serial.print(c);           // (Optional) Print it to debug/log
+       // Serial.print(c);           // (Optional) Print it to debug/log
     ethClient.stop();
   }
 }
@@ -1031,6 +1050,7 @@ uint8_t SonosUPnP::CheckUPnP( IPAddress *List, int Listsize ) {
   WiFiUDP SSDP_UDP;  // A UDP instance to let us send and receive packets over UDP
   IPAddress tmpIP;
   // broadcast  a discovery packet to get the Sonos Zone Players to respond
+  Serial.print("start scan");
   SSDP_UDP.begin( 1900 );
   SSDP_UDP.beginPacket( IPAddress( 239, 255, 255, 250 ), 1900 ); // SSDP request at port 1900
   SSDP_UDP.write( p_UPnPBroadcast, sizeof( p_UPnPBroadcast ) );
@@ -1220,7 +1240,40 @@ void SonosUPnP::upnpGetString( IPAddress speakerIP, uint8_t upnpMessageType, PGM
   ethClient_stop();
 }
 
+bool SonosUPnP::isValidTimeFormat(const char *str) {
+    int len = strlen(str);
+
+    // Acceptable lengths: "0:00:00" (7 chars) or "00:00:00" (8 chars)
+    if (len < 7 || len > 8) return false;
+
+    // Check if the first character is a digit
+    if (!isdigit(str[0])) return false;
+
+    // Check if the second character is a digit or a colon
+    if (len == 8 && !isdigit(str[1])) return false; // If length is 8, it must be a digit
+    if (len == 7 && str[1] != ':') return false;    // If length is 7, it must be a colon
+
+    // Check fixed positions for colons
+    if (len == 8) {
+        if (str[2] != ':' || str[5] != ':') return false;
+    } else { // len == 7
+        if (str[1] != ':' || str[4] != ':') return false;
+    }
+
+    // Check remaining digits
+    int startIndex = (len == 8) ? 3 : 2;  // Adjust index based on format
+    for (int i = startIndex; i < len; i++) {
+        if (i == startIndex + 2 || i == startIndex + 5) {
+            if (str[i] != ':') return false;  // Ensure colons are in the right places
+        } else {
+            if (!isdigit(str[i])) return false;  // Ensure digits in other places
+        }
+    }
+    return true;
+}
+
 uint32_t SonosUPnP::getTimeInSeconds( const char *time ) {
+  
   uint8_t len      = strlen( time );
   uint32_t seconds = 0;
   uint8_t dPower   = 0;
