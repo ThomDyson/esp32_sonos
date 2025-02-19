@@ -25,7 +25,7 @@ This library includes hardforks are other projects. These have been modified in 
 This is a hard fork of the XML procesor found [here](https://github.com/tmittet/microxpath). 
 
 **SonosUPnP**
-This is a hard fork of the Sonos processing library found [here](https://github.com/javos65/Sonos-ESP32). This is an amazing library. I've only scratched the surface of the functions, but at same time it is showing its age. For example, there is no support for straming services like Spotify. 
+This is a hard fork of the Sonos processing library found [here](https://github.com/javos65/Sonos-ESP32). This is an amazing library. I've only scratched the surface of the functions, but at same time it is showing its age. For example, there is no support for streaming services like Spotify. 
 
 ## Instructions
 Download all the source files and install them into your Arduino Libraries folder, under "esp32_sonos". You will need to configure two variables, "ssid" and "WiFipassword" for your Wifi setup.
@@ -40,7 +40,7 @@ const char *WiFipassword = "MySuperSecretPassword";      // Change this to your 
 The controller scans the network on boot to find Sonos devices. If two devices are configured as a stereo pair, they will both show up, but only one will report playing music.
 
 - For the rotary display, the bezel is the volume dial. Pressing the bezel toggles mute.
-- Touch the zone name to change to the next zone in your list or open the list of plaers and select one. The zone list will wrap around to the first entry when it reaches the end.
+- Touch the zone name to change to the next zone in your list or open the list of players and select one. The zone list will wrap around to the first entry when it reaches the end.
 - If the selected devices is not playing music, the backlight will turn off after 5 minutes
 
 ## ToDo
