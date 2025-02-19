@@ -179,6 +179,7 @@ void readSonosPlayerInfo() {
 void RefreshSonosInfo(void *parameter) {
   static int loopTimmer = 0;
   if (currentSonosIP != IPAddress(0, 0, 0, 0)) {
+    Serial.println(currentSonosIP.toString());
     while (1) {
       readSonosSoundInfo();
       if ((millis() - loopTimmer) > 2000) {
@@ -210,6 +211,7 @@ void SonosInit() {
   uint8_t myresults;
   myresults = sonosClient.CheckUPnP(sonosIPList, MAXSONOS);
   populateSonosDevices();
+  roomSelector = 0;
   strcpy(currentSonosPlayerName, sonosDevices[roomSelector].title);
   currentSonosIP = sonosDevices[roomSelector].ip;
   Serial.println(currentSonosIP);

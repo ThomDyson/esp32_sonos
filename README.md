@@ -37,14 +37,14 @@ const char *WiFipassword = "MySuperSecretPassword";      // Change this to your 
 
 ## Usage
 
-The controller scans the network on boot to find Sonos devices. If two devices are configured as a stereo pair, they will both show up, but only will report anby playing music.
+The controller scans the network on boot to find Sonos devices. If two devices are configured as a stereo pair, they will both show up, but only one will report playing music.
 
 - For the rotary display, the bezel is the volume dial. Pressing the bezel toggles mute.
-- Touch the zone name to change to the next zone in your list. The zone list will wrap around to the first entry when it reaches the end.
+- Touch the zone name to change to the next zone in your list or open the list of plaers and select one. The zone list will wrap around to the first entry when it reaches the end.
 - If the selected devices is not playing music, the backlight will turn off after 5 minutes
 
 ## ToDo
-I'm not sure I'll add much to this. Obvious improvements would include:
+ Obvious improvements would include:
 
 Resolve the issue with stereo pairs. This is the difference between devicews and zones.
 Display and toggle modes like shuffle and repeat.  This would nbt be hard, but I don't use those features much.
